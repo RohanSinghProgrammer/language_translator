@@ -94,7 +94,11 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
                     size: 24,
                   ),
                   value: _outputLanguages[1],
-                  items: _languages.map((String language) {
+                  items: _languages
+                      .where(
+                    (element) => element != _outputLanguages[0],
+                  )
+                      .map((String language) {
                     return DropdownMenuItem<String>(
                         value: language, child: Text(language));
                   }).toList(),
