@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:translator/translator.dart';
 
 class TranslatorScreen extends StatefulWidget {
   const TranslatorScreen({super.key});
@@ -9,27 +10,34 @@ class TranslatorScreen extends StatefulWidget {
 }
 
 class _TranslatorScreenState extends State<TranslatorScreen> {
-  final List<String> _languages = ["English", "Hindi", "Bengali"];
+  final translator = GoogleTranslator();
+  final List<String> _languages = ["English", "Hindi", "Bengali", "Russian"];
   final List<String> _outputLanguages = ["English", "Hindi"];
   final TextEditingController _inputText = TextEditingController();
   String result = "";
 
   // * Function to get language code
-  String? _getLanguageCode(String language) {
+  String _getLanguageCode(String language) {
     Map<String, String> langMap = {
       "English": "en",
       "Hindi": "hi",
-      "Bengali": "bn"
+      "Bengali": "bn",
+      "Russian": "ru"
     };
-    return langMap[language];
+    return langMap[language] ?? "";
   }
 
   // * Translate Language Function
-  void _translateLanguage() {
-    String? fromLanguageCode = _getLanguageCode(_outputLanguages[0]);
-    String? toLanguageCode = _getLanguageCode(_outputLanguages[1]);
+  void _translateLanguage() async {
+    String fromLanguageCode = _getLanguageCode(_outputLanguages[0]);
+    String toLanguageCode = _getLanguageCode(_outputLanguages[1]);
 
-    print("$fromLanguageCode -> $toLanguageCode -> ${_inputText.text}");
+    var result = await translator.translate(_inputText.text,
+        from: fromLanguageCode, to: toLanguageCode);
+
+    setState(() {
+      this.result = result.text;
+    });
   }
 
   @override
@@ -115,7 +123,10 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
         // * Translated Text comes here
         Padding(
           padding: const EdgeInsets.all(24),
-          child: Text(result),
+          child: Text(
+            result,
+            style: const TextStyle(fontSize: 24),
+          ),
         )
       ]),
     );
